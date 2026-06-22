@@ -30,7 +30,7 @@ class TranscriptEntry(BaseModel):
 
 class AudioResult(BaseModel):
     transcript: List[TranscriptEntry] = Field(..., description="List of time-stamped content")
-    
+
 class QuestionItem(BaseModel):
     question: str
     weight: int
@@ -68,7 +68,7 @@ async def evaluate_single_question_async(item: QuestionItem) -> dict:
     try:
         # 1. Pull and format prompt
         prompt = pull_prompt_from_langsmith("single-question-evaluation-sigma")
-        formatted_prompt = prompt(
+        formatted_prompt = prompt.format(
             model_answer=item.model_answer, 
             student_answer=item.student_answer, 
             weight=item.weight, 
@@ -102,7 +102,7 @@ async def generate_report_async(payload: ReportRequest) -> dict:
     # 3. Generate the final report
     try:
         prompt = pull_prompt_from_langsmith("report-generation-sigma")
-        formatted_prompt = prompt(
+        formatted_prompt = prompt.format(
             list_of_grades=list_of_grades, 
             list_of_weights=list_of_weights, 
             language=payload.language
